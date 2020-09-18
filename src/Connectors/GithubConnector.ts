@@ -5,13 +5,14 @@ import { Repository } from '../Model/repository.interface';
 import chalk from 'chalk';
 import { Color } from '../Enum/Color';
 
+
 export class GithubConnector {
 
     public constructor() {}
 
     public analyseRepositories(): Promise<Repository[]> {
         return new Promise((resolve, reject) => {
-            this.buildRequest(ConstValues.repoUrl).then(repos => {
+            this.buildRequest(ConstValues.REPO_URL).then(repos => {
                 console.log(chalk[Color.info]('Watching ' + repos.length + ' repositories...'));
                 const newRepos: Repository[] = [];
 
@@ -34,7 +35,7 @@ export class GithubConnector {
                     if(pqs[a]['state'] == "open") {
                         cachedRepos[i]['pullRequests'].push({link: pqs[a]['html_url'], id: pqs[a]['id'] + "", 
                         platform: "Github", title: pqs[a]['title'], description: pqs[a]['body'], 
-                        voteend: Math.round(Date.now() / 1000) + ConstValues.voteIntervall});
+                        voteend: Math.round(Date.now() / 1000) + ConstValues.VOTE_INTERVALL});
                     }
                 }
             }
@@ -91,7 +92,7 @@ export class GithubConnector {
         return {
             uri: url,
             headers: {
-                "Authorization": ConstValues.gitHubToken,
+                "Authorization": "Bearer " + ConstValues.GITHUB_TOKEN,
                 'User-Agent': 'request'
             },
             json: true
@@ -102,7 +103,7 @@ export class GithubConnector {
         return {
             uri: url,
             headers: {
-                "Authorization": ConstValues.gitHubToken,
+                "Authorization": "Bearer " + ConstValues.GITHUB_TOKEN,
                 'User-Agent': 'request'
             },
             body: {
@@ -118,7 +119,7 @@ export class GithubConnector {
         return {
             uri: url,
             headers: {
-                "Authorization": ConstValues.gitHubToken,
+                "Authorization": "Bearer " + ConstValues.GITHUB_TOKEN,
                 'User-Agent': 'request'
             },
             body: {
@@ -126,9 +127,5 @@ export class GithubConnector {
             },
             json: true
         }
-    }
-
-    public test(): string {
-        return 'yo';
     }
 }

@@ -20,8 +20,7 @@ export class Main {
         this.githubConnector = new GithubConnector();
         this.chainConnector = new ChainConnector();
 
-
-        console.log(chalk[Color.info]('New pull request will be searched every ' + (ConstValues.scanTaskIntervall / 1000) + " seconds."));
+        console.log(chalk[Color.info]('New pull request will be searched every ' + (ConstValues.SCAN_TASK_INTERVALL / 1000) + " seconds."));
         console.log(chalk[Color.info]('                             '));
         console.log(chalk[Color.info]('Starting scan task...'));
         this.startTimer();
@@ -39,7 +38,7 @@ export class Main {
             });
             
             await this.chainConnector.checkForFinishedPoll();
-        }, ConstValues.scanTaskIntervall);
+        }, ConstValues.SCAN_TASK_INTERVALL);
     }
 
     private async interactWithBlockchain(repositories: Repository[]) {

@@ -4,8 +4,15 @@ import { PullRequest } from '../Model/pullrequests.interface';
 import { GithubConnector } from '../Connectors/GithubConnector';
 import chalk from 'chalk';
 import { Color } from '../Enum/Color';
-import { Repository } from '../Model/repository.interface';
 import { Cache } from './Cache';
+
+declare var process: {
+    env: {
+        CONTRACT_ADDRESS: string,
+        PRIVATE_KEY: string,
+        PROVIDER: string
+    }
+}
 
 export class ChainConnector {
     public account: any;
@@ -14,23 +21,23 @@ export class ChainConnector {
     private githubConnector: GithubConnector;
 
     public constructor() {
-        this.web3 = new Web3(new Web3.providers.HttpProvider(ConstValues.provider));
-        this.contract = new this.web3.eth.Contract(ConstValues.abi, ConstValues.contractAddress);
-        this.account = this.web3.eth.accounts.privateKeyToAccount(ConstValues.privateKey);
+        this.web3 = new Web3(new Web3.providers.HttpProvider(ConstValues.PROVIDER));
+        this.contract = new this.web3.eth.Contract(ConstValues.abi, ConstValues.CONTRACT_ADDRESS);
+        this.account = this.web3.eth.accounts.privateKeyToAccount(ConstValues.PRIVATE_KEY);
         this.githubConnector = new GithubConnector();
     }
 
     public transferPullRequests(pqs: PullRequest[], cache: Cache): Promise<PullRequest[]> {
         return new Promise(async (resolve, reject) => {
             for (let i = 0; i < pqs.length; i++) {
-                if(!cache.pullRequestLinks.some(link => link == pqs[i].link)) {
+                if (!cache.pullRequestLinks.some(link => link == pqs[i].link)) {
                     this.createPullRequest(pqs[i]).then(_ => {
                         console.log(chalk[Color.success]("The pull request '" + pqs[i].title + "' was transfered!"));
                         cache.pullRequestLinks.push(pqs[i].link);
                     }).catch(async _ => {
                         console.log(chalk[Color.error]("The pull request '" + pqs[i].title + "' could not be transfered!"));
                         const exists = await this.contract.methods.getPollIndex(pqs[i].id, pqs[i].platform).call();
-                        if(exists > 0) {
+                        if (exists > 0) {
                             cache.pullRequestLinks.push(pqs[i].link);
                             console.log(chalk[Color.info]("The pull request '" + pqs[i].title + "' already exists, no action required!"));
                         }
@@ -122,7 +129,7 @@ export class ChainConnector {
 
                 const txObject = {
                     nonce: this.web3.utils.toHex(txCount),
-                    to: ConstValues.contractAddress,
+                    to: ConstValues.CONTRACT_ADDRESS,
                     gasLimit: this.web3.utils.toHex(gasLimit),
                     gasPrice: this.web3.utils.toHex(this.web3.utils.toWei('11', 'gwei')),
                     data: contractData
@@ -130,7 +137,7 @@ export class ChainConnector {
 
                 // Sign the transaction
                 const tx = new Transaction(txObject, { chain: 'kovan', hardfork: 'istanbul' })
-                const pk = Buffer.from(ConstValues.privateKey, 'hex')
+                const pk = Buffer.from(ConstValues.PRIVATE_KEY, 'hex')
                 tx.sign(pk)
 
                 const serializedTx = tx.serialize()
