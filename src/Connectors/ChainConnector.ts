@@ -18,13 +18,14 @@ export class ChainConnector {
     public account: any;
     private web3: any;
     private contract: any;
-    private githubConnector: GithubConnector;
+    //private githubConnector: GithubConnector;
 
-    public constructor() {
+    public constructor(private githubConnector: GithubConnector) {
         this.web3 = new Web3(new Web3.providers.HttpProvider(ConstValues.PROVIDER));
         this.contract = new this.web3.eth.Contract(ConstValues.abi, ConstValues.CONTRACT_ADDRESS);
+        console.log(chalk[Color.success]("Private key:  " + ConstValues.PRIVATE_KEY));
         this.account = this.web3.eth.accounts.privateKeyToAccount(ConstValues.PRIVATE_KEY);
-        this.githubConnector = new GithubConnector();
+        //this.githubConnector = new GithubConnector();
     }
 
     public transferPullRequests(pqs: PullRequest[], cache: Cache): Promise<PullRequest[]> {

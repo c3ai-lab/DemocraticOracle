@@ -8,7 +8,9 @@ import { Color } from '../Enum/Color';
 
 export class GithubConnector {
 
-    public constructor() {}
+    public constructor() {
+        console.log(chalk[Color.success]("Github Token:  " + ConstValues.GITHUB_TOKEN));
+    }
 
     public analyseRepositories(): Promise<Repository[]> {
         return new Promise((resolve, reject) => {
@@ -17,8 +19,8 @@ export class GithubConnector {
                 const newRepos: Repository[] = [];
 
                 repos.forEach((repo: any) => {
-                    if(!repo['private']) {
-                        newRepos.push({name: repo['name'], pullRequests: []})
+                    if (!repo['private']) {
+                        newRepos.push({ name: repo['name'], pullRequests: [] })
                     }
                 });
 
@@ -29,13 +31,15 @@ export class GithubConnector {
 
     public analyseRepositoryPQs(cachedRepos: Repository[]): Promise<Repository[]> {
         return new Promise(async (resolve, reject) => {
-            for(let i = 0; i < cachedRepos.length; i++) {
+            for (let i = 0; i < cachedRepos.length; i++) {
                 const pqs = await this.getPullRequests(cachedRepos[i]['name']);
-                for(let a = 0; a < pqs.length; a++) {
-                    if(pqs[a]['state'] == "open") {
-                        cachedRepos[i]['pullRequests'].push({link: pqs[a]['html_url'], id: pqs[a]['id'] + "", 
-                        platform: "Github", title: pqs[a]['title'], description: pqs[a]['body'], 
-                        voteend: Math.round(Date.now() / 1000) + ConstValues.VOTE_INTERVALL});
+                for (let a = 0; a < pqs.length; a++) {
+                    if (pqs[a]['state'] == "open") {
+                        cachedRepos[i]['pullRequests'].push({
+                            link: pqs[a]['html_url'], id: pqs[a]['id'] + "",
+                            platform: "Github", title: pqs[a]['title'], description: pqs[a]['body'],
+                            voteend: Math.round(Date.now() / 1000) + ConstValues.VOTE_INTERVALL
+                        });
                     }
                 }
             }
@@ -86,7 +90,7 @@ export class GithubConnector {
         const options = this.getRequestOptions(url);
         return get(options);
     }
-    
+
 
     private getRequestOptions(url: string): any {
         return {
