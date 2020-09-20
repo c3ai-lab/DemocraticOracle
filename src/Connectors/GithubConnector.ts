@@ -4,9 +4,10 @@ import { PullRequest } from '../Model/pullrequests.interface';
 import { Repository } from '../Model/repository.interface';
 import chalk from 'chalk';
 import { Color } from '../Enum/Color';
+import { IHostingPlatformConnector } from './IHostingPlatformConnector';
 
 
-export class GithubConnector {
+export class GithubConnector implements IHostingPlatformConnector{
 
     public constructor() {
         console.log(chalk[Color.success]("Github Token:  " + ConstValues.GITHUB_TOKEN));

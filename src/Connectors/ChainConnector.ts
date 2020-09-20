@@ -5,6 +5,7 @@ import { GithubConnector } from '../Connectors/GithubConnector';
 import chalk from 'chalk';
 import { Color } from '../Enum/Color';
 import { Cache } from './Cache';
+import { IHostingPlatformConnector } from './IHostingPlatformConnector';
 
 declare var process: {
     env: {
@@ -20,7 +21,7 @@ export class ChainConnector {
     private contract: any;
     //private githubConnector: GithubConnector;
 
-    public constructor(private githubConnector: GithubConnector) {
+    public constructor(private githubConnector: IHostingPlatformConnector) {
         this.web3 = new Web3(new Web3.providers.HttpProvider(ConstValues.PROVIDER));
         this.contract = new this.web3.eth.Contract(ConstValues.abi, ConstValues.CONTRACT_ADDRESS);
         console.log(chalk[Color.success]("Private key:  " + ConstValues.PRIVATE_KEY));
