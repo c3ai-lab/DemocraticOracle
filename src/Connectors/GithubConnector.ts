@@ -5,12 +5,13 @@ import { Repository } from '../Model/repository.interface';
 import chalk from 'chalk';
 import { Color } from '../Enum/Color';
 import { IHostingPlatformConnector } from './IHostingPlatformConnector';
+import Anonymizer from './Anonymizer';
 
 
-export class GithubConnector implements IHostingPlatformConnector{
+export class GithubConnector implements IHostingPlatformConnector {
 
     public constructor() {
-        console.log(chalk[Color.success]("Github Token:  " + ConstValues.GITHUB_TOKEN));
+        console.log(chalk[Color.success]("Github Token:  " + Anonymizer.anonymize(ConstValues.GITHUB_TOKEN)));
     }
 
     public analyseRepositories(): Promise<Repository[]> {

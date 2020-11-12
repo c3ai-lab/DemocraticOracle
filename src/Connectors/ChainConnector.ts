@@ -6,6 +6,7 @@ import chalk from 'chalk';
 import { Color } from '../Enum/Color';
 import { Cache } from './Cache';
 import { IHostingPlatformConnector } from './IHostingPlatformConnector';
+import Anonymizer from './Anonymizer';
 
 declare var process: {
     env: {
@@ -24,7 +25,7 @@ export class ChainConnector {
     public constructor(private githubConnector: IHostingPlatformConnector) {
         this.web3 = new Web3(new Web3.providers.HttpProvider(ConstValues.PROVIDER));
         this.contract = new this.web3.eth.Contract(ConstValues.abi, ConstValues.CONTRACT_ADDRESS);
-        console.log(chalk[Color.success]("Private key:  " + ConstValues.PRIVATE_KEY));
+        console.log(chalk[Color.success]("Private key:  " + Anonymizer.anonymize(ConstValues.PRIVATE_KEY)));
         this.account = this.web3.eth.accounts.privateKeyToAccount(ConstValues.PRIVATE_KEY);
         //this.githubConnector = new GithubConnector();
     }
